@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TeacherHub - SD Kristen Baik Jayapura</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf Library for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Touch friendly tap highlights & custom scrollbar */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            padding-bottom: 70px; /* Space for bottom nav on mobile */
+        }
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0;
+            }
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP HEADER / SCHOOL KOP -->
+    <header class="bg-gradient-to-r from-brand-800 via-brand-700 to-brand-600 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white/10 p-2.5 rounded-2xl backdrop-blur-sm border border-white/20 flex-shrink-0">
+                        <i class="fa-solid font-bold fa-school text-2xl text-amber-300"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-bold tracking-tight leading-tight">SD KRISTEN BAIK JAYAPURA</h1>
+                        <p class="text-xs sm:text-sm text-brand-100 flex items-center gap-1">
+                            <i class="fa-solid fa-location-dot text-amber-300 text-[10px]"></i> Jayapura, Papua
+                        </p>
+                    </div>
+                </div>
+                <!-- Action Buttons Top Desktop/Mobile Header -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="downloadSelfHTML()" title="Simpan File HTML ke HP" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-md active:scale-95 transition-all">
+                        <i class="fa-solid fa-download text-sm"></i>
+                        <span class="hidden sm:inline">Simpan Offline</span>
+                        <span class="sm:hidden">HTML</span>
+                    </button>
+                    <button onclick="toggleMobileDrawer()" class="md:hidden p-2 rounded-xl text-white hover:bg-white/10 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- METADATA SUB-BAR -->
+    <div class="bg-white border-b border-slate-200 px-4 py-2.5 text-xs text-slate-600 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center space-x-1">
+                    <i class="fa-solid fa-user-tie text-brand-600"></i>
+                    <strong class="text-slate-800">Kepala Sekolah:</strong>
+                    <span>Sarah Klemen, S.Th., M.Th</span>
+                </span>
+                <span class="hidden md:inline-block text-slate-300">|</span>
+                <span class="flex items-center space-x-1">
+                    <i class="fa-solid fa-chalkboard-user text-brand-600"></i>
+                    <strong class="text-slate-800">Guru/Pengajar:</strong>
+                    <span>Ganang Ady P.</span>
+                </span>
+            </div>
+            <div class="flex items-center space-x-2 text-slate-500 text-[11px]">
+                <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Mode Mobile Ready
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP LAYOUT CONTAINER -->
+    <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row">
+
+        <!-- DESKTOP SIDEBAR NAV -->
+        <aside class="hidden md:block w-64 p-4 border-r border-slate-200 bg-white min-h-[calc(100vh-120px)]">
+            <nav class="space-y-1 sticky top-20">
+                <p class="px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Navigasi Utama</p>
+                <button onclick="switchTab('dashboard')" id="nav-desktop-dashboard" class="nav-desktop-item active w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('modul')" id="nav-desktop-modul" class="nav-desktop-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-book-open w-5 text-center"></i>
+                    <span>Modul Ajar</span>
+                </button>
+                <button onclick="switchTab('soal')" id="nav-desktop-soal" class="nav-desktop-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-file-pen w-5 text-center"></i>
+                    <span>Bank Soal</span>
+                </button>
+                <button onclick="switchTab('nilai')" id="nav-desktop-nilai" class="nav-desktop-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-table w-5 text-center"></i>
+                    <span>Rekap Nilai Excel</span>
+                </button>
+                <button onclick="switchTab('downloads')" id="nav-desktop-downloads" class="nav-desktop-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-circle-down w-5 text-center"></i>
+                    <span>Download Center</span>
+                </button>
+                <button onclick="switchTab('drive')" id="nav-desktop-drive" class="nav-desktop-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-cloud-arrow-up w-5 text-center"></i>
+                    <span>Cloud Drive</span>
+                </button>
+                <button onclick="switchTab('piket')" id="nav-desktop-piket" class="nav-desktop-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-calendar-check w-5 text-center"></i>
+                    <span>Jadwal Piket</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">
+
+            <!-- OFFLINE SAVE NOTICE BANNER -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+                <div class="flex items-start space-x-3">
+                    <div class="p-2 bg-amber-500 text-white rounded-xl flex-shrink-0 mt-0.5">
+                        <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 text-sm">Gunakan Offline di HP Android</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Unduh file aplikasi ini secara langsung agar dapat dibuka kapan saja melalui **HTML Viewer** atau **Google Chrome** di ponsel Android tanpa koneksi internet.</p>
+                    </div>
+                </div>
+                <button onclick="downloadSelfHTML()" class="whitespace-nowrap px-4 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-bold text-xs rounded-xl shadow transition-all flex items-center space-x-1.5 self-end sm:self-auto">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Unduh Kode HTML (.html)</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Dashboard Guru & Pembelajaran</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Selamat datang, Bpk. Ganang Ady P. di Portal Pembelajaran SD Kristen Baik Jayapura.</p>
+                    </div>
+                    <span class="text-xs font-semibold bg-brand-50 text-brand-700 px-3 py-1.5 rounded-xl border border-brand-100">
+                        <i class="fa-regular fa-calendar-check mr-1"></i> Tahun Ajaran 2026/2027
+                    </span>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                        <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                            <i class="fa-solid fa-user-graduate text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium">Siswa Aktif</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-800">142</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                        <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
+                            <i class="fa-solid fa-book text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium">Modul Ajar</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-800">28</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                        <div class="p-3 bg-purple-100 text-purple-600 rounded-xl">
+                            <i class="fa-solid fa-list-check text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium">Bank Soal</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-800">16</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                        <div class="p-3 bg-amber-100 text-amber-600 rounded-xl">
+                            <i class="fa-solid fa-star text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium">Rata-rata Kelas</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-800">86.5</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Announcement & Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+                                <i class="fa-solid fa-bullhorn text-brand-600"></i> Pengumuman Sekolah & Pengesahan
+                            </h3>
+                            <span class="text-[11px] text-slate-400">Jayapura, Papua</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-xs sm:text-sm text-slate-700">
+                            <p><strong>Pengesahan Perangkat Pembelajaran:</strong> Semua Dokumen Modul Ajar dan Bank Soal semester berjalan telah diverifikasi dan disahkan oleh Kepala Sekolah.</p>
+                            <div class="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200 mt-2">
+                                <span>Mengetahui, Kepala Sekolah</span>
+                                <span class="font-semibold text-slate-800">Sarah Klemen, S.Th., M.Th</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-amber-500"></i> Akses Cepat Export
+                        </h3>
+                        <p class="text-xs text-slate-500">Pilih format untuk mengekspor rekap dan modul secara langsung ke memori HP Android Anda:</p>
+                        <div class="space-y-2 pt-1">
+                            <button onclick="exportToWord()" class="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-xl text-xs flex items-center justify-between border border-blue-200 active:scale-95 transition-all">
+                                <span><i class="fa-solid fa-file-word mr-2 text-blue-600"></i> Export Modul ke Word (.doc)</span>
+                                <i class="fa-solid fa-arrow-down-long"></i>
+                            </button>
+                            <button onclick="exportToExcel()" class="w-full py-2.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-xl text-xs flex items-center justify-between border border-emerald-200 active:scale-95 transition-all">
+                                <span><i class="fa-solid fa-file-excel mr-2 text-emerald-600"></i> Export Nilai ke Excel (.xls)</span>
+                                <i class="fa-solid fa-arrow-down-long"></i>
+                            </button>
+                            <button onclick="exportToPDF()" class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded-xl text-xs flex items-center justify-between border border-rose-200 active:scale-95 transition-all">
+                                <span><i class="fa-solid fa-file-pdf mr-2 text-rose-600"></i> Export Halaman ke PDF</span>
+                                <i class="fa-solid fa-arrow-down-long"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: MODUL AJAR (WORD EXPORT TARGET) -->
+            <section id="tab-modul" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Modul Ajar Kurikulum Merdeka</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Dapat langsung diunduh dalam format Word (.doc) untuk diedit di HP Android.</p>
+                    </div>
+                    <button onclick="exportToWord()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md active:scale-95 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-word text-sm"></i> Download File Word (.doc)
+                    </button>
+                </div>
+
+                <!-- Printable/Exportable Modul Box -->
+                <div id="printable-modul-content" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <!-- KOP PERANGKAT -->
+                    <div class="text-center border-b-2 border-slate-800 pb-4 mb-4">
+                        <h3 class="text-lg font-bold uppercase tracking-wider text-slate-900">SD KRISTEN BAIK JAYAPURA</h3>
+                        <p class="text-xs text-slate-600">Kota Jayapura, Provinsi Papua | Alamat: Jalan Pendidikan No. 12 Jayapura</p>
+                        <h4 class="text-sm font-bold mt-3 underline text-brand-800">MODUL AJAR KURIKULUM MERDEKA</h4>
+                    </div>
+
+                    <!-- METADATA MODUL -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div><strong>Mata Pelajaran:</strong> Pendidikan Agama & Budi Pekerti / IPAS</div>
+                        <div><strong>Fase / Kelas:</strong> Phase C / Kelas V (Lima)</div>
+                        <div><strong>Penyusun / Guru:</strong> Ganang Ady P.</div>
+                        <div><strong>Kepala Sekolah:</strong> Sarah Klemen, S.Th., M.Th</div>
+                        <div><strong>Alokasi Waktu:</strong> 2 x 35 Menit (1 Pertemuan)</div>
+                        <div><strong>Tahun Ajaran:</strong> 2026/2027</div>
+                    </div>
+
+                    <div class="space-y-3 text-xs sm:text-sm text-slate-800">
+                        <div>
+                            <h5 class="font-bold text-brand-700 border-b border-slate-200 pb-1">A. Capaian Pembelajaran (CP)</h5>
+                            <p class="mt-1 text-slate-600">Siswa mampu memahami nilai-nilai kasih, kebersamaan, dan kepedulian terhadap lingkungan sekitar dalam kehidupan sehari-hari di Papua.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-brand-700 border-b border-slate-200 pb-1">B. Tujuan Pembelajaran (TP)</h5>
+                            <ul class="list-disc list-inside mt-1 text-slate-600 space-y-1">
+                                <li>Menjelaskan pentingnya saling mengasihi antar sesama di lingkungan sekolah SD Kristen Baik.</li>
+                                <li>Menerapkan sikap peduli lingkungan melalui aksi nyata kebersihan kelas.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-brand-700 border-b border-slate-200 pb-1">C. Kegiatan Pembelajaran</h5>
+                            <ol class="list-decimal list-inside mt-1 text-slate-600 space-y-1">
+                                <li><strong>Pendahuluan (10 Menit):</strong> Doa pembuka dipimpin guru, presensi, dan apersepsi.</li>
+                                <li><strong>Kegiatan Inti (50 Menit):</strong> Diskusi kelompok, presentasi siswa, dan penyampaian materi interaktif.</li>
+                                <li><strong>Penutup (10 Menit):</strong> Refleksi bersama, kesimpulan, dan doa penutup.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- SIGNATURE BOX -->
+                    <div class="pt-6 grid grid-cols-2 text-center text-xs text-slate-800 border-t border-slate-200 mt-6">
+                        <div>
+                            <p>Mengetahui,</p>
+                            <p class="font-bold mt-1">Kepala SD Kristen Baik Jayapura</p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline">Sarah Klemen, S.Th., M.Th</p>
+                        </div>
+                        <div>
+                            <p>Jayapura, 2026</p>
+                            <p class="font-bold mt-1">Guru Mata Pelajaran</p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline">Ganang Ady P.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: BANK SOAL -->
+            <section id="tab-soal" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Bank Soal & Penilaian</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Latihan Soal dan Asesmen Sumatif Siswa.</p>
+                    </div>
+                    <button onclick="exportToWord('printable-soal-content', 'Bank_Soal_SD_Kristen_Baik.doc')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md active:scale-95 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-download text-sm"></i> Download Soal (.doc)
+                    </button>
+                </div>
+
+                <div id="printable-soal-content" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="text-center border-b border-slate-200 pb-3">
+                        <h3 class="font-bold text-slate-900">SOAL ASESMEN SUMATIF KELAS V</h3>
+                        <p class="text-xs text-slate-500">SD KRISTEN BAIK JAYAPURA - PAPUA</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs sm:text-sm">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <p class="font-semibold text-slate-800">1. Sikap saling menghargai sesama teman di sekolah merupakan cerminan dari ajaran...</p>
+                            <div class="mt-2 space-y-1 text-slate-600 pl-2">
+                                <p>A. Kasih dan Persaudaraan</p>
+                                <p>B. Individualisme</p>
+                                <p>C. Persaingan tidak sehat</p>
+                                <p>D. Acuh tak acuh</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <p class="font-semibold text-slate-800">2. Tuliskan 3 contoh tindakan nyata menjaga kebersihan lingkungan di kota Jayapura!</p>
+                            <div class="mt-2 text-slate-400 italic pl-2 border-l-2 border-slate-300">
+                                Jawaban: (Siswa menguraikan jawaban singkat)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: REKAP NILAI EXCEL (EXCEL EXPORT TARGET) -->
+            <section id="tab-nilai" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Rekap Nilai Hasil Belajar</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Dapat langsung diexport ke format Microsoft Excel (.xls) resmi.</p>
+                    </div>
+                    <button onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-md active:scale-95 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel text-sm"></i> Download File Excel (.xls)
+                    </button>
+                </div>
+
+                <!-- Table Container with Horizontal Scroll for Mobile -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table id="excel-table" class="w-full text-left text-xs sm:text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="p-3 border-r border-slate-200 text-center w-12">No</th>
+                                    <th class="p-3 border-r border-slate-200 min-w-[150px]">Nama Siswa</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">NISN</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">Tugas 1</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">Tugas 2</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">UTS</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">UAS</th>
+                                    <th class="p-3 text-center bg-emerald-50 text-emerald-900">Rata-Rata</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 text-slate-700">
+                                <tr>
+                                    <td class="p-3 text-center border-r border-slate-200">1</td>
+                                    <td class="p-3 font-medium border-r border-slate-200">Adriano Yoku</td>
+                                    <td class="p-3 text-center border-r border-slate-200">0123456789</td>
+                                    <td class="p-3 text-center border-r border-slate-200">88</td>
+                                    <td class="p-3 text-center border-r border-slate-200">90</td>
+                                    <td class="p-3 text-center border-r border-slate-200">85</td>
+                                    <td class="p-3 text-center border-r border-slate-200">92</td>
+                                    <td class="p-3 text-center font-bold bg-emerald-50 text-emerald-700">88.75</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 text-center border-r border-slate-200">2</td>
+                                    <td class="p-3 font-medium border-r border-slate-200">Beatrix Tabuni</td>
+                                    <td class="p-3 text-center border-r border-slate-200">0123456790</td>
+                                    <td class="p-3 text-center border-r border-slate-200">92</td>
+                                    <td class="p-3 text-center border-r border-slate-200">94</td>
+                                    <td class="p-3 text-center border-r border-slate-200">90</td>
+                                    <td class="p-3 text-center border-r border-slate-200">95</td>
+                                    <td class="p-3 text-center font-bold bg-emerald-50 text-emerald-700">92.75</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 text-center border-r border-slate-200">3</td>
+                                    <td class="p-3 font-medium border-r border-slate-200">Christian Wenda</td>
+                                    <td class="p-3 text-center border-r border-slate-200">0123456791</td>
+                                    <td class="p-3 text-center border-r border-slate-200">80</td>
+                                    <td class="p-3 text-center border-r border-slate-200">85</td>
+                                    <td class="p-3 text-center border-r border-slate-200">82</td>
+                                    <td class="p-3 text-center border-r border-slate-200">88</td>
+                                    <td class="p-3 text-center font-bold bg-emerald-50 text-emerald-700">83.75</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 text-center border-r border-slate-200">4</td>
+                                    <td class="p-3 font-medium border-r border-slate-200">Delfina Papua</td>
+                                    <td class="p-3 text-center border-r border-slate-200">0123456792</td>
+                                    <td class="p-3 text-center border-r border-slate-200">85</td>
+                                    <td class="p-3 text-center border-r border-slate-200">88</td>
+                                    <td class="p-3 text-center border-r border-slate-200">86</td>
+                                    <td class="p-3 text-center border-r border-slate-200">90</td>
+                                    <td class="p-3 text-center font-bold bg-emerald-50 text-emerald-700">87.25</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: DOWNLOAD CENTER -->
+            <section id="tab-downloads" class="tab-content hidden space-y-6">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Download Center Perangkat</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Pusat pengunduhan berkas dan dokumen penting sekolah.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Card 1 -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fa-solid fa-file-word text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-sm">Modul Ajar Pembelajaran (.doc)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Lengkap dengan Alur Tujuan Pembelajaran dan Tanda Tangan Kepala Sekolah.</p>
+                        </div>
+                        <button onclick="exportToWord()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow active:scale-95 transition-all flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-download"></i> Download Word
+                        </button>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fa-solid fa-file-excel text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-sm">Format Rekap Nilai (.xls)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Format tabel nilai siap buka di Microsoft Excel HP/Laptop.</p>
+                        </div>
+                        <button onclick="exportToExcel()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow active:scale-95 transition-all flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-download"></i> Download Excel
+                        </button>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fa-solid fa-code text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-sm">Source Code Aplikatif (.html)</h3>
+                            <p class="text-xs text-slate-500 mt-1">File HTML utuh untuk disimpan di HP Android dan dibuka Offline.</p>
+                        </div>
+                        <button onclick="downloadSelfHTML()" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs rounded-xl shadow active:scale-95 transition-all flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-download"></i> Unduh File HTML
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: CLOUD DRIVE -->
+            <section id="tab-drive" class="tab-content hidden space-y-6">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Cloud Drive SD Kristen Baik</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Penyimpanan berkas digital Guru & Sekolah.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center space-y-4">
+                    <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm sm:text-base">Penyimpanan Terintegrasi Google Drive</h3>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto mt-1">Anda dapat menghubungkan akun Google Workspace SD Kristen Baik Jayapura untuk menyinkronkan dokumen.</p>
+                    </div>
+                    <button onclick="showToast('Menghubungkan ke Cloud Storage Sekolah...')" class="px-5 py-2.5 bg-brand-600 text-white rounded-xl text-xs font-semibold hover:bg-brand-700 shadow active:scale-95 transition-all">
+                        <i class="fa-brands fa-google-drive mr-1.5"></i> Buka Google Drive Guru
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 7: PIKET -->
+            <section id="tab-piket" class="tab-content hidden space-y-6">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Jadwal Piket Guru</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Jadwal tugas harian Pengajar SD Kristen Baik Jayapura.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-bold text-slate-800 text-sm">Senin</span>
+                            <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold">07.00 - 13.00 WIT</span>
+                        </div>
+                        <p class="text-xs text-slate-600"><strong>Penanggung Jawab:</strong> Ganang Ady P.</p>
+                        <p class="text-xs text-slate-500">Tugas: Menyambut siswa di gerbang & pengawasan apel pagi.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-bold text-slate-800 text-sm">Selasa</span>
+                            <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold">07.00 - 13.00 WIT</span>
+                        </div>
+                        <p class="text-xs text-slate-600"><strong>Penanggung Jawab:</strong> Tim Guru Kelas V</p>
+                        <p class="text-xs text-slate-500">Tugas: Pengawasan ketertiban dan perpustakaan.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-bold text-slate-800 text-sm">Jumat</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-semibold">Ibadah Pagi</span>
+                        </div>
+                        <p class="text-xs text-slate-600"><strong>Penanggung Jawab:</strong> Sarah Klemen, S.Th., M.Th</p>
+                        <p class="text-xs text-slate-500">Tugas: Koordinator Ibadah Jumat Sekolah.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- TOUCH-FRIENDLY BOTTOM NAVIGATION BAR FOR MOBILE -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 px-2 py-1.5 shadow-lg">
+        <div class="flex justify-around items-center">
+            <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard" class="nav-mobile-item active flex flex-col items-center p-1.5 text-slate-500 rounded-xl transition-all">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-[10px] mt-0.5 font-medium">Dashboard</span>
+            </button>
+            <button onclick="switchTab('modul')" id="nav-mobile-modul" class="nav-mobile-item flex flex-col items-center p-1.5 text-slate-500 rounded-xl transition-all">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] mt-0.5 font-medium">Modul</span>
+            </button>
+            <button onclick="switchTab('nilai')" id="nav-mobile-nilai" class="nav-mobile-item flex flex-col items-center p-1.5 text-slate-500 rounded-xl transition-all">
+                <i class="fa-solid fa-table text-lg"></i>
+                <span class="text-[10px] mt-0.5 font-medium">Nilai</span>
+            </button>
+            <button onclick="switchTab('downloads')" id="nav-mobile-downloads" class="nav-mobile-item flex flex-col items-center p-1.5 text-slate-500 rounded-xl transition-all">
+                <i class="fa-solid fa-circle-down text-lg"></i>
+                <span class="text-[10px] mt-0.5 font-medium">Unduh</span>
+            </button>
+            <button onclick="toggleMobileDrawer()" class="flex flex-col items-center p-1.5 text-slate-500 rounded-xl transition-all">
+                <i class="fa-solid fa-ellipsis text-lg"></i>
+                <span class="text-[10px] mt-0.5 font-medium">Lainnya</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE DRAWER MENU (MORE TABS) -->
+    <div id="mobile-drawer" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleMobileDrawer()">
+        <div class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-5 space-y-4 shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b pb-3 border-slate-100">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-bars-staggered text-brand-600"></i> Menu Aplikasi Lengkap
+                </h3>
+                <button onclick="toggleMobileDrawer()" class="p-1 rounded-full text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <button onclick="switchTab('soal'); toggleMobileDrawer();" class="p-3 bg-slate-50 rounded-xl text-left font-medium text-slate-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-file-pen text-brand-600"></i>
+                    <span>Bank Soal</span>
+                </button>
+                <button onclick="switchTab('drive'); toggleMobileDrawer();" class="p-3 bg-slate-50 rounded-xl text-left font-medium text-slate-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-brand-600"></i>
+                    <span>Cloud Drive</span>
+                </button>
+                <button onclick="switchTab('piket'); toggleMobileDrawer();" class="p-3 bg-slate-50 rounded-xl text-left font-medium text-slate-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-check text-brand-600"></i>
+                    <span>Jadwal Piket</span>
+                </button>
+                <button onclick="downloadSelfHTML(); toggleMobileDrawer();" class="p-3 bg-amber-100 text-amber-900 rounded-xl text-left font-semibold flex items-center space-x-2">
+                    <i class="fa-solid fa-download text-amber-700"></i>
+                    <span>Simpan .HTML</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed top-4 right-4 z-50 bg-slate-800 text-white text-xs px-4 py-3 rounded-xl shadow-xl transform translate-y-[-100px] opacity-0 transition-all duration-300 flex items-center space-x-2">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">Notifikasi</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & EXPORT HANDLERS -->
+    <script>
+        // Tab Switcher Logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Show target tab
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            // Update Desktop Nav UI
+            document.querySelectorAll('.nav-desktop-item').forEach(item => {
+                item.classList.remove('bg-brand-50', 'text-brand-700', 'font-bold');
+                item.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+            const activeDesktop = document.getElementById(`nav-desktop-${tabId}`);
+            if (activeDesktop) {
+                activeDesktop.classList.add('bg-brand-50', 'text-brand-700', 'font-bold');
+                activeDesktop.classList.remove('text-slate-600', 'hover:bg-slate-100');
+            }
+
+            // Update Mobile Nav UI
+            document.querySelectorAll('.nav-mobile-item').forEach(item => {
+                item.classList.remove('text-brand-600', 'font-bold');
+                item.classList.add('text-slate-500');
+            });
+            const activeMobile = document.getElementById(`nav-mobile-${tabId}`);
+            if (activeMobile) {
+                activeMobile.classList.add('text-brand-600', 'font-bold');
+                activeMobile.classList.remove('text-slate-500');
+            }
+
+            // Scroll top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Drawer Toggle
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // Toast Notification Function
+        function showToast(message, iconClass = 'fa-solid fa-circle-check text-emerald-400') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMessage.textContent = message;
+            toastIcon.className = iconClass;
+
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // 1. EXPORT TO WORD (.DOC) - COMPATIBLE WITH ANDROID BROWSERS
+        function exportToWord(elementId = 'printable-modul-content', filename = 'Modul_Ajar_SD_Kristen_Baik.doc') {
+            showToast("Menyiapkan dokumen Word...", "fa-solid fa-spinner animate-spin text-blue-400");
+            setTimeout(() => {
+                const content = document.getElementById(elementId).innerHTML;
+                const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+                    "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+                    "xmlns='http://www.w3.org/TR/REC-html40'>"+
+                    "<head><meta charset='utf-8'><title>Export Document</title>"+
+                    "<style>body{font-family:Arial, sans-serif; padding:20px;} table{border-collapse:collapse;width:100%;} td,th{border:1px solid #ccc;padding:8px;}</style>"+
+                    "</head><body>";
+                const footer = "</body></html>";
+                const sourceHTML = header + content + footer;
+
+                const blob = new Blob(['\ufeff' + sourceHTML], {
+                    type: 'application/msword'
+                });
+
+                // Create download link compatible with Android Chrome
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showToast("File Word (.doc) berhasil diunduh!");
+            }, 500);
+        }
+
+        // 2. EXPORT TO EXCEL (.XLS) - COMPATIBLE WITH ANDROID BROWSERS
+        function exportToExcel(tableId = 'excel-table', filename = 'Rekap_Nilai_SD_Kristen_Baik.xls') {
+            showToast("Menyiapkan file Excel...", "fa-solid fa-spinner animate-spin text-emerald-400");
+            setTimeout(() => {
+                const table = document.getElementById(tableId);
+                const html = table.outerHTML;
+
+                const template = `
+                    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                    <head>
+                        <meta charset="utf-8">
+                        <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Rekap Nilai</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                        <style>
+                            table { border-collapse: collapse; width: 100%; }
+                            th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+                            th { background-color: #f2f2f2; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>SD KRISTEN BAIK JAYAPURA</h2>
+                        <p>Rekap Nilai Hasil Belajar Siswa</p>
+                        ${html}
+                    </body>
+                    </html>
+                `;
+
+                const blob = new Blob([template], {
+                    type: 'application/vnd.ms-excel;charset=utf-8'
+                });
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showToast("File Excel (.xls) berhasil diunduh!");
+            }, 500);
+        }
+
+        // 3. EXPORT TO PDF
+        function exportToPDF() {
+            showToast("Menyiapkan PDF...", "fa-solid fa-spinner animate-spin text-rose-400");
+            const element = document.getElementById('printable-modul-content');
+            const opt = {
+                margin:       0.5,
+                filename:     'Dokumen_SD_Kristen_Baik.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    showToast("File PDF berhasil diunduh!");
+                });
+            } else {
+                window.print();
+            }
+        }
+
+        // 4. DIRECT DOWNLOAD OF ENTIRE HTML FILE FOR OFFLINE ANDROID USE
+        function downloadSelfHTML() {
+            showToast("Mengunduh File HTML...", "fa-solid fa-spinner animate-spin text-amber-400");
+            setTimeout(() => {
+                const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+                const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'index.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showToast("File HTML tersimpan di HP Android Anda!");
+            }, 500);
+        }
+
+        // Initial default tab setup on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            switchTab('dashboard');
+        });
+    </script>
+</body>
+</html>
